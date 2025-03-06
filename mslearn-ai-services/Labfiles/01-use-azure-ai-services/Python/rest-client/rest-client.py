@@ -3,6 +3,7 @@ import os
 import http.client, base64, json, urllib
 from urllib import request, parse, error
 
+
 def main():
     global ai_endpoint
     global ai_key
@@ -10,45 +11,45 @@ def main():
     try:
         # Get Configuration Settings
         load_dotenv()
-        ai_endpoint = os.getenv('AI_SERVICE_ENDPOINT')
-        ai_key = os.getenv('AI_SERVICE_KEY')
+        ai_endpoint = os.getenv("AI_SERVICE_ENDPOINT")
+        ai_key = os.getenv("AI_SERVICE_KEY")
 
         # Get user input (until they enter "quit")
-        userText =''
-        while userText.lower() != 'quit':
+        userText = ""
+        while userText.lower() != "quit":
             userText = input('Enter some text ("quit" to stop)\n')
-            if userText.lower() != 'quit':
+            if userText.lower() != "quit":
                 GetLanguage(userText)
-
 
     except Exception as ex:
         print(ex)
 
+
 def GetLanguage(text):
     try:
         # Construct the JSON request body (a collection of documents, each with an ID and text)
-        jsonBody = {
-            "documents":[
-                {"id": 1,
-                 "text": text}
-            ]
-        }
+        jsonBody = {"documents": [{"id": 1, "text": text}]}
 
         # Let's take a look at the JSON we'll send to the service
         print(json.dumps(jsonBody, indent=2))
 
         # Make an HTTP request to the REST interface
-        uri = ai_endpoint.rstrip('/').replace('https://', '')
+        uri = ai_endpoint.rstrip("/").replace("https://", "")
         conn = http.client.HTTPSConnection(uri)
 
         # Add the authentication key to the request header
         headers = {
-            'Content-Type': 'application/json',
-            'Ocp-Apim-Subscription-Key': ai_key
+            "Content-Type": "application/json",
+            "Ocp-Apim-Subscription-Key": ai_key,
         }
 
         # Use the Text Analytics language API
-        conn.request("POST", "/text/analytics/v3.1/languages?", str(jsonBody).encode('utf-8'), headers)
+        conn.request(
+            "POST",
+            "/text/analytics/v3.1/languages?",
+            str(jsonBody).encode("utf-8"),
+            headers,
+        )
 
         # Send the request
         response = conn.getresponse()
@@ -70,7 +71,6 @@ def GetLanguage(text):
             print(data)
 
         conn.close()
-
 
     except Exception as ex:
         print(ex)
